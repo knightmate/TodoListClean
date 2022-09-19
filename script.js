@@ -7,6 +7,8 @@ const newTaskInput=document.querySelector("[data-new-task-input]");
 const newListInput=document.querySelector("[data-new-list-input");
 const cardListTitle=document.querySelector("[data-list-title]");
  const taskTemplate=document.getElementById("task-template");
+ const taskCount=document.querySelector("[data-list-count]");
+
 
 
 let selectedTaskListid_=null;
@@ -19,6 +21,7 @@ const lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
  renderListTask(lists[0]);
  changeCardView(lists[0].id);
  saveSelectedItem(lists[0].id)
+ renderTaskCount();
 
  function selectedTaskListid(id){
   selectedTaskListid=id;
@@ -30,19 +33,20 @@ const lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
  }
 
  taskContainer.addEventListener("click",(event)=>{
-
-    
     const checkedTaskId=event.target.id;
     if(!checkedTaskId)return;
        //mark the completed task as comeplte
+
+       //find the selectedList
      const selectedList= lists.find((task)=>task.id==selectedTaskListid_);
-      console.log("id",checkedTaskId)
-      console.log("id",selectedList)
 
+     //get teh task by id from selectedList
       const task= selectedList.task.find((task)=>task.id==checkedTaskId);
-      console.log("taks",task)
-      task.complete=true;
 
+      //mark it as true
+      task.complete=!task.complete;
+      console.log(lists)
+      renderTaskCount();
 
  });
 
@@ -82,6 +86,7 @@ newListForm.addEventListener('submit',(e)=>{
 function saveAndRender(){
   saveList(lists);
   renderList(lists);
+  renderTaskCount();
  };
 
  function renderListTask(selectedList){
@@ -94,14 +99,14 @@ function saveAndRender(){
 
             const checkBox=taskElement.querySelector("input");
             checkBox.id=task.id;
-            checkBox.checked=task.comeplete
+            checkBox.checked=task.complete
             const label=taskElement.querySelector("label");
 
             label.htmlFor=task.id;
             label.append(task.name);
 
             taskContainer.appendChild(taskElement);
-
+             
            })
      
 
@@ -116,7 +121,7 @@ function changeCardView(id){
 
 }
 
-const saveList=(lists)=>{
+function saveList(lists){
 
      localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(lists))
 
@@ -158,8 +163,11 @@ newTaskForm.addEventListener('submit',(event)=>{
     selectedList.task.push(newtask);
    // console.log("updated list",task,lists);
    clearListUI(taskContainer);
+   console.log("lists",lists)
    renderListTask(selectedList);
+   renderTaskCount()
    clearInput(newTaskInput);
+   
 
 });
 
@@ -170,6 +178,17 @@ function clearInput(inputRef){
 
 }
 
+function renderTaskCount(){
+
+  const taskString="task remaining";
+  const selectedTask=lists.find((task)=>task.id==selectedTaskListid_);
+
+ const count= selectedTask.task.filter((task)=>task.complete==false).length;
+
+  taskCount.innerHTML=count+" "+taskString;
+  saveList(lists);
+ 
+}
  
 function createTask(taskName){
  
