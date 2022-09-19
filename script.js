@@ -135,7 +135,7 @@ newTaskForm.addEventListener('submit',(event)=>{
 
 });
 
-
+//important update ,chceking commit 
 function clearInput(inputRef){
 
   inputRef.value="";
