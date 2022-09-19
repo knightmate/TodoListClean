@@ -16,24 +16,48 @@ const LOCAL_STORAGE_KEY="LOCAL_STORAGE_KEY";
 const lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
 
  renderList(lists);
+ renderListTask(lists[0]);
+ changeCardView(lists[0].id);
+ saveSelectedItem(lists[0].id)
 
  function selectedTaskListid(id){
   selectedTaskListid=id;
  }
 
  function saveSelectedItem(id){
+  if(!id)return;
   selectedTaskListid_=id;
  }
+
+ taskContainer.addEventListener("click",(event)=>{
+
+    
+    const checkedTaskId=event.target.id;
+    if(!checkedTaskId)return;
+       //mark the completed task as comeplte
+     const selectedList= lists.find((task)=>task.id==selectedTaskListid_);
+      console.log("id",checkedTaskId)
+      console.log("id",selectedList)
+
+      const task= selectedList.task.find((task)=>task.id==checkedTaskId);
+      console.log("taks",task)
+      task.complete=true;
+
+
+ });
+
 listContainer.addEventListener("click",(event)=>{
 
+   
+    clearListUI(taskContainer)
+ 
+    const selectedItemId=event.target.id;
+ 
+    saveSelectedItem(selectedItemId);
   
-
-  const selectedItemId=event.target.id;
-  saveSelectedItem(selectedItemId);
-  
-
     changeCardView(selectedItemId);
-
+    const selectedList=lists.find((task)=>task.id==selectedItemId);
+    renderListTask(selectedList);
     
 });
 
@@ -61,7 +85,9 @@ function saveAndRender(){
  };
 
  function renderListTask(selectedList){
- console.log("list",selectedList)
+       console.log('selected',selectedList)
+       if(!selectedList)return;
+
            selectedList.task.forEach((task)=>{
 
             const taskElement=document.importNode(taskTemplate.content,true);
@@ -81,8 +107,10 @@ function saveAndRender(){
 
  }
 
-const changeCardView=(id)=>{
- 
+function changeCardView(id){
+  console.log("id",id)
+    if(!id)return;
+
     const targetedItem= lists.find((item)=>item.id==id);
     cardListTitle.innerHTML=targetedItem.name;
 
@@ -145,7 +173,7 @@ function clearInput(inputRef){
  
 function createTask(taskName){
  
-  return {id:Date.now().toString(),name:taskName,comeplete:false};
+  return {id:Date.now().toString(),name:taskName,complete:false};
 
 };
 
