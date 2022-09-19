@@ -108,4 +108,47 @@ function renderList(lists){
 
 }
 
+ 
+function clearListUI(element){
+     
+    while(element.firstChild){
+        element.removeChild(element.firstChild)
+    };
+};
+
+newTaskForm.addEventListener('submit',(event)=>{
+
+  console.log("taksname",newTaskForm.value)
+
+  event.preventDefault();
+  const taskName=newTaskInput.value;
+
+  const newtask=createTask(taskName);
   
+  //add the task to task list
+     const selectedList=lists.find((task)=>task.id==selectedTaskListid_);
+    selectedList.task.push(newtask);
+   // console.log("updated list",task,lists);
+   clearListUI(taskContainer);
+   renderListTask(selectedList);
+   clearInput(newTaskInput);
+
+});
+
+//important update ,chceking s
+function clearInput(inputRef){
+
+  inputRef.value="";
+
+}
+
+ 
+function createTask(taskName){
+ 
+  return {id:Date.now().toString(),name:taskName,comeplete:false};
+
+};
+
+function createList(taskName){
+  return {id:Date.now().toString(),name: taskName , task:[]};
+}
