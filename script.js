@@ -41,19 +41,14 @@ let lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
      //delete from lists
      const filteredList=lists.filter(list=>list.id!==selectedTaskListid_);
      lists=filteredList;
-     
-     //make the selectedId null
-    
       
-     clearListUI(listContainer);
+        clearCardView();
        saveAndRender(lists);
-      
-       clearCardView()
        selectedTaskListid_=null;
-
+       
  });
 
-
+  
  clearCompletedTaskButton.addEventListener('click',()=>{
 
      const selectedList=lists.find((list)=>list.id==selectedTaskListid_);
@@ -81,6 +76,7 @@ let lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
       //mark it as true
       task.complete=!task.complete;
       console.log(lists)
+      saveList(lists);
       renderTaskCount();
 
  });
@@ -122,6 +118,13 @@ function saveAndRender(){
   saveList(lists);
   renderList(lists);
   renderTaskCount();
+
+  clearListUI(taskContainer);
+   if(selectedTaskListid_ && lists.length>0){
+ const selectedList=   lists.find((list)=>list.id==selectedTaskListid_);
+ renderListTask(selectedList);
+   }
+
  };
 
  function renderListTask(selectedList){
@@ -168,9 +171,11 @@ function saveList(lists){
 };
 
 function renderList(lists){
+
+  clearListUI(listContainer);
     if(!lists.length)return;
 
-       clearListUI(listContainer);
+        
        lists.forEach((list=>{
         const listElement=document.createElement('li');
         listElement.id=list.id;
@@ -234,7 +239,7 @@ console.log(lists,selectedTaskListid_)
  const count= selectedTask.task.filter((task)=>task.complete==false).length;
 
   taskCount.innerHTML=count+" "+taskString;
-  saveList(lists);
+  
  
 }
  
