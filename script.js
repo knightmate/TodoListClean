@@ -8,19 +8,21 @@ const newListInput=document.querySelector("[data-new-list-input");
 const cardListTitle=document.querySelector("[data-list-title]");
  const taskTemplate=document.getElementById("task-template");
  const taskCount=document.querySelector("[data-list-count]");
-
+ 
+const clearCompletedTaskButton=document.querySelector("[data-clear-complete-tasks-button]");
+const deletedListButton=document.querySelector("[data-delete-list-button]");
 
 
 let selectedTaskListid_=null;
 
 const LOCAL_STORAGE_KEY="LOCAL_STORAGE_KEY";
   
-const lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+let lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
 
  renderList(lists);
  renderListTask(lists[0]);
- changeCardView(lists[0].id);
- saveSelectedItem(lists[0].id)
+ changeCardView(lists[0]?.id);
+ saveSelectedItem(lists[0]?.id)
  renderTaskCount();
 
  function selectedTaskListid(id){
@@ -31,6 +33,33 @@ const lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
   if(!id)return;
   selectedTaskListid_=id;
  }
+
+
+
+ deletedListButton.addEventListener('click',()=>{
+    
+     //delete from lists
+     const filteredList=lists.filter(list=>list.id!==selectedTaskListid_);
+     lists=filteredList;
+     clearListUI(listContainer);
+       saveAndRender(lists);
+      
+
+ });
+
+
+ clearCompletedTaskButton.addEventListener('click',()=>{
+
+     const selectedList=lists.find((list)=>list.id==selectedTaskListid_);
+    const filteredList= selectedList.task.filter((task)=>!task.complete);
+     selectedList.task=filteredList;
+       console.log('filte',filteredList,selectedList)
+       saveList(lists);
+       clearListUI(taskContainer);
+     renderListTask(selectedList);
+     
+  
+ })
 
  taskContainer.addEventListener("click",(event)=>{
     const checkedTaskId=event.target.id;
@@ -122,7 +151,7 @@ function changeCardView(id){
 }
 
 function saveList(lists){
-
+   console.log("lists",lists);
      localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(lists))
 
 };
@@ -180,6 +209,7 @@ function clearInput(inputRef){
 
 function renderTaskCount(){
 
+  if(!lists ||  !selectedTaskListid_)return;
   const taskString="task remaining";
   const selectedTask=lists.find((task)=>task.id==selectedTaskListid_);
 
