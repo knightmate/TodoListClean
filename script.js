@@ -41,9 +41,15 @@ let lists=JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
      //delete from lists
      const filteredList=lists.filter(list=>list.id!==selectedTaskListid_);
      lists=filteredList;
+     
+     //make the selectedId null
+    
+      
      clearListUI(listContainer);
        saveAndRender(lists);
       
+       clearCardView()
+       selectedTaskListid_=null;
 
  });
 
@@ -141,6 +147,11 @@ function saveAndRender(){
 
  }
 
+ function clearCardView(){
+  cardListTitle.innerHTML="No List Selected!";
+  taskCount.innerHTML="";
+  
+ }
 function changeCardView(id){
   console.log("id",id)
     if(!id)return;
@@ -180,10 +191,17 @@ function clearListUI(element){
 
 newTaskForm.addEventListener('submit',(event)=>{
 
-  console.log("taksname",newTaskForm.value)
-
+ 
   event.preventDefault();
   const taskName=newTaskInput.value;
+
+  //Handle the edge cases
+  if(taskName=="")return;
+
+  if(selectedTaskListid_==null){
+    alert("Please Select List")
+    return;
+  }
 
   const newtask=createTask(taskName);
   
@@ -208,8 +226,8 @@ function clearInput(inputRef){
 }
 
 function renderTaskCount(){
-
-  if(!lists ||  !selectedTaskListid_)return;
+console.log(lists,selectedTaskListid_)
+  if(lists.length==0 ||  !selectedTaskListid_)return;
   const taskString="task remaining";
   const selectedTask=lists.find((task)=>task.id==selectedTaskListid_);
 
